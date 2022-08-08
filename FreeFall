@@ -1,0 +1,116 @@
+echo "# Constant-Acceleration-Lab" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/Spulloa/Constant-Acceleration-Lab.git
+git push -u origin main
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+position = np.array([1,0,0]) ## units in meters
+velocity = np.array([1.5,0,0]) ## m/s
+acceleration_g = np.array([0,0,-9.81]) # object in freefall 
+
+Δt = 0.01 ### s(detector)
+t0 = 0 
+tf = 1
+
+timeline = np.arange(t0,tf,Δt)
+
+position = np.array([1,0,0]) ### units in meters
+velocity = np.array([1.5,0,0]) ### m/s
+acceleration_g = np.array([0,0,-9.81])
+
+xA_t = np.zeros((len(timeline),3))
+vA_t = np.zeros((len(timeline),3))
+
+xA_t[0] = position
+vA_t[0] = velocity
+for t in range(len(timeline)-1):
+    xA_t[t+1] = xA_t[t] + vA_t[t]*Δt + acceleration_g * (Δt*Δt)/2
+    
+    vA_t[t+1] = vA_t[t] + acceleration_g * Δt
+    
+dvA = np.gradient(vA_t[:,2])/Δt
+
+plt.scatter(timeline, xA_t[:,2])
+plt.title("Motion with Constant Acceleration")
+plt.xlabel("Time (s)")
+plt.ylabel("Position (m)")
+plt.show()
+
+plt.scatter(timeline, vA_t[:,2])
+plt.title("Velocity with Constant Acceleration")
+plt.xlabel("Time (s)")
+plt.ylabel("Position (m)")
+plt.show()
+
+plt.scatter(timeline, dvA)
+plt.ylim([-10,-9])
+plt.title("Instantaneous Velocity")
+plt.xlabel("Time (s)")
+plt.ylabel("Velocity (m)")
+plt.show()
+
+# acceleration of object on ramp
+
+ϴ = 90
+ϴ_rad = ϴ * (np.pi/180) # convert to radians
+
+ramp_ϴ = acceleration_g * np.sin(ϴ_rad) # acceleration of object moving down a ramp
+
+ramp_ϴ
+
+def ramp_ϴ(ϴ):
+    return np.sin(ϴ * (np.pi/180))
+
+print(ramp_ϴ(90))
+print(ramp_ϴ(45))
+print(ramp_ϴ(0))
+
+Δx = 0.001
+2 * (np.random.random(1)-0.5) * Δx
+
+position = np.array([1,0,0]) ### units in meters
+velocity = np.array([1.5,0,0]) ### m/s
+acceleration_g = ramp_ϴ(10) * np.array([0,0,-9.81])
+
+xA_t = np.zeros((len(timeline),3))
+vA_t = np.zeros((len(timeline),3))
+
+xA_t[0] = position
+vA_t[0] = velocity
+for t in range(len(timeline)-1):
+    xA_t[t+1] = xA_t[t] + vA_t[t]*Δt + acceleration_g * (Δt*Δt)/2 + 2 * (np.random.random(1)-0.5) * Δx
+    
+    vA_t[t+1] = vA_t[t] + acceleration_g * Δt
+    
+dvA = np.gradient(vA_t[:,2])/Δt
+
+z, cov = np.polyfit(timeline, xA_t[:,2], 2, cov=True)
+c = np.sqrt(np.sum(np.diag(cov)))
+
+poly = np.asarray([timeline**2, timeline, np.ones(timeline.shape)])
+x_fit = np.dot(z, poly)
+
+plt.plot(timeline, x_fit, color = "r")
+plt.scatter(timeline, xA_t[:,2])
+plt.title("Motion with Constant Acceleration σ =%4.2f" % σ )
+plt.xlabel("Time (s)")
+plt.ylabel("Position (m)")
+plt.show()
+
+plt.scatter(timeline, vA_t[:,2])
+plt.title("Velocity with Constant Acceleration")
+plt.xlabel("Time (s)")
+plt.ylabel("Position (m)")
+plt.show()
+
+plt.scatter(timeline, dvA)
+plt.ylim([-2,-1])
+plt.title("Instantaneous Velocity")
+plt.xlabel("Time (s)")
+plt.ylabel("Velocity (m)")
+plt.show()
